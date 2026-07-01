@@ -14,6 +14,29 @@ Final renders write:
 
 The script now encodes `webp_transparent.webp` first and then decodes that WebP to generate the GIF files. This does not remove GIF's transparency limit, but it ensures GIF conversion starts from the same high-quality alpha intermediate.
 
+## QA and repair loop
+
+Do not tune the mask blindly after a bad GIF. Locate the failing layer first:
+
+1. Inspect `frames_rgba/` on a checker or white background.
+2. Inspect `output/webp_transparent.webp`.
+3. Decode `output/sticker.gif` back to RGBA frames and inspect those frames.
+
+Use the result to choose the fix:
+
+- Artifact exists in `frames_rgba/`: fix crop, rembg model, alpha matte, or frame-level cleanup.
+- WebP is clean but GIF shows black or solid blocks: fix GIF palette/transparency encoding, not the mask.
+- RGBA/WebP are clean but decoded GIF has hard edges: this is usually the GIF format limit; offer `gif_white.gif` or keep WebP as the quality reference.
+
+For detached non-target fragments, use connected-component analysis on the alpha channel:
+
+1. Find alpha components for each RGBA frame.
+2. Identify the accepted subject region from the preview/crop and main subject component.
+3. Remove only detached components that are outside the accepted region and satisfy stable evidence such as small area, separation from the main subject, or location near crop edges.
+4. Avoid hard rectangular deletion unless the user explicitly approves it; it often clips hair, effects, speech bubbles, or motion lines.
+
+After any cleanup, regenerate `webp_transparent.webp`, then regenerate all GIF outputs from that WebP, and verify the decoded GIF frames. A clean `frames_rgba/` check alone is not enough.
+
 ## Alpha matte workflow
 
 Avoid using a binary mask directly as alpha for final frames. Prefer:
@@ -78,5 +101,6 @@ BRIA/RMBG weights can have non-commercial license restrictions. Do not choose `b
 - Keep final renders to 12 frames by default. Increase `--max-frames` only when the user explicitly asks for smoother motion.
 - Use `--crop x,y,w,h` for deterministic results when the subject is small.
 - Keep intermediate frames until the user approves the result.
+- For pop-up or bounce stickers, preserve enough leading and trailing frames to show the motion, then use `--max-frames` to sample the arc evenly.
 - If rembg causes flicker, lower fps or switch to manual crop plus chromakey/manual masks.
 - If GIF edges look harsh but WebP looks good, explain the GIF format limit instead of over-tuning the mask.

@@ -18,7 +18,12 @@ Use `scripts/bili_gif.py` for deterministic clip extraction and GIF assembly.
    - `--mode auto` defaults to `--rembg-model auto`, which routes through a small candidate pool from `--subject-type` and the target hint. Use `--compare-rembg-models` in preview mode when quality is uncertain.
    - Do not use BRIA/RMBG model weights for commercial work unless the user confirms they have the needed license.
 7. Render only after confirmation by passing `--render`. The script defaults to `--max-frames 12`; raise it only when the user explicitly asks for more frames.
-8. During long downloads, rembg runs, or GIF encoding, wait for the command result with a longer tool timeout instead of repeatedly asking the user to confirm progress.
+8. After rendering, run a QA pass before delivery:
+   - Inspect `output/checker_sheet.png` and `output/white_check.png`.
+   - If artifacts appear, compare `frames_rgba/`, `output/webp_transparent.webp`, and decoded GIF frames to locate whether the issue is masking, WebP encoding, or GIF transparency encoding.
+   - For detached non-target fragments, prefer connected-component cleanup on RGBA frames over hard rectangular erasure. Keep the rule based on general evidence such as component size, separation from the subject, and location outside the accepted subject region.
+   - Regenerate WebP first, then regenerate GIFs from WebP, and verify the decoded GIF frames again.
+9. During long downloads, rembg runs, or GIF encoding, wait for the command result with a longer tool timeout instead of repeatedly asking the user to confirm progress.
 
 Default work layout:
 
@@ -27,6 +32,7 @@ Default work layout:
   video/
   frames_raw/
   frames_rgba/
+  inspect/       # optional manual QA sheets and decoded GIF checks
   preview/
     timeline_contact_sheet.png
     preview_processed.png

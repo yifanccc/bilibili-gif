@@ -52,7 +52,7 @@ git clone https://github.com/yifanccc/bilibili-gif.git ~/.codex/skills/bilibili-
 然后可以在 Codex 里这样使用：
 
 ```text
-使用 $bilibili-gif 生成 https://www.bilibili.com/video/BV... 中 24:58-25:02 左上角两个 Q 版人物的 gif
+使用 $bilibili-gif 生成 https://www.bilibili.com/video/BV... 中 00:10-00:13 中间弹出的角色 gif
 ```
 
 ## 作为独立脚本使用
@@ -68,11 +68,11 @@ python scripts/bili_gif.py --help
 默认就是预览模式，不会生成最终 GIF。它会下载/抽帧，生成时间轴预览图，并处理 1 张透明预览帧。
 
 ```bash
-python scripts/bili_gif.py "https://www.bilibili.com/video/BV17F7d6aE8Q/" \
-  --start 00:24:58 --end 00:25:02 \
+python scripts/bili_gif.py "https://www.bilibili.com/video/BV..." \
+  --start 00:00:10 --end 00:00:13 \
   --cookies-from-browser chrome \
-  --target "左上角两个Q版人物，包含完整黄色气泡和粉色樱花" \
-  --crop 0,0,1450,1080 \
+  --target "中间弹出的角色，包含文字气泡和动效线" \
+  --crop 0,0,1280,720 \
   --mode auto --rembg-model auto --subject-type effects \
   --compare-rembg-models \
   --width 560 \
@@ -94,8 +94,8 @@ python scripts/bili_gif.py "https://www.bilibili.com/video/BV17F7d6aE8Q/" \
 ```bash
 python scripts/bili_gif.py ./example-work/video/source.mp4 \
   --start 0 --end 3.25 \
-  --target "左上角两个Q版人物，包含完整黄色气泡和粉色樱花" \
-  --crop 0,0,1450,1080 \
+  --target "中间弹出的角色，包含文字气泡和动效线" \
+  --crop 0,0,1280,720 \
   --mode auto --rembg-model auto --subject-type effects \
   --rembg-alpha-matting --rembg-post-process-mask \
   --alpha-matte pymatting \
@@ -113,9 +113,22 @@ python scripts/bili_gif.py ./example-work/video/source.mp4 \
   video/        # 视频源
   frames_raw/   # 原始帧
   frames_rgba/  # 抠图后的透明帧
+  inspect/      # 可选，人工复核用的拼图和解码帧检查
   preview/      # 预览帧、时间轴、模型对比
   output/       # 最终 GIF/WebP 和检查图
 ```
+
+## 通用优化流程
+
+遇到边缘粗糙、黑块、残留碎片或动作不明显时，按层定位，不要直接重跑全流程：
+
+1. 先看 `frames_rgba/`，确认抠图后的 PNG 帧是否干净。
+2. 再看 `webp_transparent.webp`，确认高质量透明中间文件是否干净。
+3. 最后把 `sticker.gif` 解码成帧检查，确认 GIF 编码没有带入黑块或残留。
+4. 如果是独立的非目标碎片，用 alpha 连通域做清理；不要直接用矩形擦除，容易误伤头发、气泡、动效线。
+5. 清理后重新生成 WebP，再从 WebP 生成 GIF，并复查 `checker_sheet.png`。
+
+如果要保留“弹出来”的动态感觉，时间范围要包含出现前后的缓冲帧；需要更顺滑时再显式提高 `--max-frames`。
 
 ## 抠图模式
 
