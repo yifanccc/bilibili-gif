@@ -24,6 +24,8 @@ coarse mask -> erode/dilate trimap -> alpha matte -> foreground estimate -> RGBA
 
 Use `--alpha-matte pymatting` when a coarse alpha already exists from chromakey, edge removal, SAM/SAM2/Cutie, or rembg. The script builds a trimap from the coarse alpha and uses PyMatting to estimate alpha and foreground colors. Use `--alpha-matte feather` only as a quick fallback.
 
+Dependency note: `--mode auto` needs `rembg[cpu]` and `onnxruntime`; `--alpha-matte pymatting` needs `pymatting`, `numpy`, and `scipy`.
+
 ## Target selection from natural language
 
 Natural language does not directly identify pixels. Convert it into this chain:

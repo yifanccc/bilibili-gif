@@ -84,11 +84,11 @@ python /Users/caoyifan/.codex/skills/bilibili-gif/scripts/bili_gif.py "https://w
 
 ## Dependencies
 
-- Required for video input: `ffmpeg`.
-- Required for frame processing: Python with `Pillow`.
-- Optional for Bilibili URL input: `yt-dlp`; failures are expected under Bilibili anti-scraping or login checks.
-- Optional for `--mode auto`: `rembg`.
-- Optional for `--alpha-matte pymatting`: `PyMatting`.
+- Recommended install:
+  `brew install ffmpeg && python -m pip install -U pillow yt-dlp "rembg[cpu]" pymatting numpy scipy onnxruntime`
+- Minimal local-video processing needs `ffmpeg` and `Pillow`.
+- Bilibili URL/BV input needs `yt-dlp`; failures are expected under Bilibili anti-scraping or login checks.
+- `--mode auto` needs `rembg[cpu]`/`onnxruntime`; `--alpha-matte pymatting` needs `pymatting`, `numpy`, and `scipy`.
 - Optional for natural-language object localization: Grounding DINO or Florence-2 for boxes, plus SAM/SAM2 for masks.
 
 ## References

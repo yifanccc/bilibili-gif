@@ -25,25 +25,20 @@
 
 ## 依赖安装
 
-必需：
+推荐一次装齐：
 
 ```bash
 brew install ffmpeg
-python -m pip install pillow
+python -m pip install -U pillow yt-dlp "rembg[cpu]" pymatting numpy scipy onnxruntime
 ```
 
-推荐：
-
-```bash
-python -m pip install yt-dlp rembg pymatting
-```
-
-说明：
+如果只处理本地视频且不自动抠图，`ffmpeg` + `pillow` 就够；其他功能按需使用：
 
 - `yt-dlp`：处理 Bilibili URL/BV 输入时需要。
-- `rembg`：使用 `--mode auto` 自动抠图时需要。
-- `pymatting`：使用 `--alpha-matte pymatting` 优化边缘时需要。
+- `rembg[cpu]` + `onnxruntime`：使用 `--mode auto` 自动抠图时需要。
+- `pymatting` + `numpy` + `scipy`：使用 `--alpha-matte pymatting` 优化边缘时需要。
 - Bilibili 有时需要登录态，可以使用 `--cookies-from-browser chrome`。
+- 非 macOS 环境用系统包管理器安装 `ffmpeg`。
 
 ## 作为 Codex Skill 安装
 
@@ -144,4 +139,3 @@ python scripts/bili_gif.py ./example-work/video/source.mp4 \
 - Bilibili 下载是 best-effort，可能因为登录、地区、版权或反爬限制失败。
 - 只处理你有权使用的视频内容。
 - BRIA/RMBG 模型权重可能有非商业授权限制，商业用途前需要确认授权。
-

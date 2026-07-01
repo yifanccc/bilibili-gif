@@ -12,6 +12,8 @@ The script accepts:
 - Bare BV IDs.
 - Local video files.
 
+Dependencies: URL/BV input needs `yt-dlp` and `ffmpeg`; local clips only need `ffmpeg` for extraction.
+
 For Bilibili URL/BV input, the prototype uses `yt-dlp` as a best-effort fetcher because it can hand off the clip to the normal local-video pipeline. Bilibili anti-scraping changes often cause `401`, `403`, `412`, empty streams, or missing quality formats. When this happens, ask the user to export/download the clip manually and pass the local file.
 
 Cookie usage:
