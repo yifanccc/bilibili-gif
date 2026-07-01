@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Local generated work directories and sticker outputs
+*-work/
+example-work/
+video/
+frames_raw/
+frames_rgba/
+preview/
+output/
+
+# Large local media files
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.gif
+*.webp
+*.png
+!agents/*.png

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bilibili GIF"
+  short_description: "从B站或本地视频片段抠图生成透明GIF表情包素材工具"
+  default_prompt: "Use $bilibili-gif to turn a Bilibili clip or local video segment into a transparent GIF sticker."
